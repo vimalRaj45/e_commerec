@@ -5,7 +5,13 @@ const API = {
     const url = `${this.baseUrl}${endpoint}`;
     const adminToken = localStorage.getItem('admin_token');
     const customerToken = localStorage.getItem('customer_token');
-    const token = adminToken || customerToken;
+    
+    let token = customerToken;
+    if (endpoint.startsWith('/admin') || endpoint.startsWith('/upload')) {
+        token = adminToken || customerToken;
+    } else {
+        token = customerToken || adminToken;
+    }
     
     const defaultHeaders = {
       'Content-Type': 'application/json',
@@ -24,9 +30,15 @@ const API = {
       const result = await response.json();
 
       if (!response.ok) {
-        if (response.status === 401 && endpoint.startsWith('/admin')) {
-          localStorage.removeItem('admin_token');
-          window.location.href = '/admin/login.html';
+        if (response.status === 401) {
+          if (endpoint.startsWith('/admin')) {
+            localStorage.removeItem('admin_token');
+            window.location.href = '/admin/login.html';
+          } else {
+            localStorage.removeItem('customer_token');
+            window.location.href = '/login.html';
+          }
+          throw result.error || { message: 'Session expired' };
         }
         throw result.error || { message: 'Something went wrong' };
       }
