@@ -3,9 +3,15 @@ const API = {
 
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    const adminToken = localStorage.getItem('admin_token');
-    const customerToken = localStorage.getItem('customer_token');
-    const token = adminToken || customerToken;
+    const isAdminPage = window.location.pathname.startsWith('/admin');
+    const isAdminApi = endpoint.startsWith('/admin') || endpoint.startsWith('/dashboard');
+    
+    let token = null;
+    if (isAdminPage || isAdminApi) {
+      token = localStorage.getItem('admin_token') || localStorage.getItem('customer_token');
+    } else {
+      token = localStorage.getItem('customer_token') || localStorage.getItem('admin_token');
+    }
     
     const defaultHeaders = {
       'Content-Type': 'application/json',
