@@ -70,7 +70,7 @@ async function authRoutes(fastify, opts) {
       email: user.email, 
       role: user.role,
       jti: Math.random().toString(36).substring(7) 
-    }, { expiresIn: '24h' });
+    }, { expiresIn: '15m' });
 
     const refreshToken = fastify.jwt.sign({ id: user.id }, { expiresIn: '7d' });
 

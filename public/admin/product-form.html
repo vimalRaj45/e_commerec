@@ -61,38 +61,6 @@
                 </div>
 
                 <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 space-y-8">
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">Available Sizes</label>
-                        <div class="flex flex-wrap gap-3">
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="sizes" value="S" class="hidden peer">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black transition-all">S</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="sizes" value="M" class="hidden peer">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black transition-all">M</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="sizes" value="L" class="hidden peer">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black transition-all">L</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="sizes" value="XL" class="hidden peer">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black transition-all">XL</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="sizes" value="XXL" class="hidden peer">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black transition-all">XXL</div>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Size Chart URL</label>
-                        <input type="text" name="sizeChartUrl" placeholder="https://image-url.com/size-chart.jpg" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 font-bold">
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 space-y-8">
                     <div class="grid grid-cols-2 gap-8">
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Stock Quantity</label>
@@ -117,7 +85,7 @@
                 <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
                     <h3 class="text-xs font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-2">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        Product Media (Max 4)
+                        Product Media
                     </h3>
                     <div id="drop-zone" class="drop-zone rounded-3xl p-10 text-center cursor-pointer mb-8 border-slate-200 hover:border-indigo-600 group transition-all">
                         <input type="file" id="file-input" multiple accept="image/*" class="hidden">
@@ -128,6 +96,39 @@
                     </div>
                     <div id="image-previews" class="grid grid-cols-2 gap-4">
                         <!-- Previews -->
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 space-y-6">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 8V4m0 4h16M4 8v12a2 2 0 002 2h12a2 2 0 002-2V8M10 12h4M10 16h4"></path></svg>
+                        Available Sizes
+                    </h3>
+                    <div class="flex flex-wrap gap-3" id="size-options">
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="XS" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">XS</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="S" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">S</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="M" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">M</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="L" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">L</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="XL" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">XL</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="sizes" value="XXL" class="hidden peer">
+                            <div class="px-5 py-3 rounded-xl border-2 border-slate-100 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white font-black text-xs transition-all uppercase">XXL</div>
+                        </label>
                     </div>
                 </div>
 
@@ -167,19 +168,20 @@
                 const p = res.data;
                 Object.keys(p).forEach(key => {
                     if (form.elements[key]) {
-                        if (key === 'sizes' && Array.isArray(p[key])) {
-                            p[key].forEach(val => {
-                                const cb = form.querySelector(`input[name="sizes"][value="${val}"]`);
-                                if (cb) cb.checked = true;
-                            });
-                        } else {
-                            form.elements[key].value = p[key];
-                        }
+                        form.elements[key].value = p[key];
                     }
                 });
                 if (p.imageUrl) uploadedImages.push(p.imageUrl);
                 if (p.images) uploadedImages.push(...p.images);
                 renderPreviews();
+
+                // Set sizes
+                if (p.sizes) {
+                    p.sizes.forEach(size => {
+                        const cb = form.querySelector(`input[name="sizes"][value="${size}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
             } catch (err) {}
         }
 
@@ -249,17 +251,16 @@
             e.preventDefault();
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
-            
-            // Collect sizes
-            const sizes = Array.from(form.querySelectorAll('input[name="sizes"]:checked')).map(cb => cb.value);
-            data.sizes = sizes;
-
             data.price = parseFloat(data.price) || 0;
             data.stock = parseInt(data.stock) || 0;
             data.comparePrice = data.comparePrice ? parseFloat(data.comparePrice) : undefined;
             
             data.imageUrl = uploadedImages[0] || '';
             data.images = uploadedImages.slice(1);
+
+            // Collect sizes
+            const sizeCbs = form.querySelectorAll('input[name="sizes"]:checked');
+            data.sizes = Array.from(sizeCbs).map(cb => cb.value);
 
             try {
                 if (productId) {

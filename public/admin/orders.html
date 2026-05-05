@@ -149,7 +149,7 @@
                         <div class="space-y-3 mb-8 flex-grow">
                             ${order.items.map(i => `
                                 <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100/50">
-                                    <span class="text-xs font-bold text-slate-700">${i.name}${i.size ? ` (${i.size})` : ''} <span class="text-slate-400 ml-1">x ${i.quantity}</span></span>
+                                    <span class="text-xs font-bold text-slate-700">${i.name} <span class="text-slate-400 ml-1">x ${i.quantity}</span></span>
                                     <span class="text-xs font-black text-slate-900">${utils.formatCurrency(i.price * i.quantity)}</span>
                                 </div>
                             `).join('')}

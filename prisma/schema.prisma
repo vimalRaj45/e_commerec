@@ -53,7 +53,6 @@ model Product {
   imageUrl     String?
   images       String[]    @default([])
   sizes        String[]    @default([])
-  sizeChartUrl String?
   hsnCode      String?
   isActive     Boolean     @default(true)
   isDeleted    Boolean     @default(false)

@@ -13,9 +13,9 @@ const Cart = {
     }
   },
 
-  async add(productId, quantity = 1, size = null) {
+  async add(productId, quantity = 1, metadata = {}) {
     try {
-      await API.post('/cart/add', { productId, quantity, size });
+      await API.post('/cart/add', { productId, quantity, metadata });
       await this.fetch();
       utils.showToast('Added to cart', 'success');
     } catch (err) {
@@ -23,18 +23,19 @@ const Cart = {
     }
   },
 
-  async update(productId, quantity) {
+  async update(productId, quantity, metadata = {}) {
     try {
-      await API.put('/cart/update', { productId, quantity });
+      await API.put('/cart/update', { productId, quantity, metadata });
       await this.fetch();
     } catch (err) {
       utils.showToast(err.message, 'error');
     }
   },
 
-  async remove(productId) {
+  async remove(productId, metadata = {}) {
     try {
-      await API.delete(`/cart/remove/${productId}`);
+      const meta = encodeURIComponent(JSON.stringify(metadata));
+      await API.delete(`/cart/remove/${productId}?metadata=${meta}`);
       await this.fetch();
     } catch (err) {
       utils.showToast(err.message, 'error');

@@ -15,9 +15,61 @@
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #334155; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .size-btn.active { background-color: var(--slate-900); color: white; border-color: var(--slate-900); }
     </style>
 </head>
 <body class="pb-32">
+    <!-- Size Chart Modal -->
+    <div id="size-chart-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleSizeChart()"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-lg p-10 shadow-2xl">
+            <h2 class="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tight">Size Chart</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-100">
+                            <th class="py-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Size</th>
+                            <th class="py-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Chest (in)</th>
+                            <th class="py-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Length (in)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-bold text-slate-600">
+                        <tr class="border-b border-slate-50">
+                            <td class="py-4">XS</td>
+                            <td class="py-4">36</td>
+                            <td class="py-4">26</td>
+                        </tr>
+                        <tr class="border-b border-slate-50">
+                            <td class="py-4">S</td>
+                            <td class="py-4">38</td>
+                            <td class="py-4">27</td>
+                        </tr>
+                        <tr class="border-b border-slate-50">
+                            <td class="py-4">M</td>
+                            <td class="py-4">40</td>
+                            <td class="py-4">28</td>
+                        </tr>
+                        <tr class="border-b border-slate-50">
+                            <td class="py-4">L</td>
+                            <td class="py-4">42</td>
+                            <td class="py-4">29</td>
+                        </tr>
+                        <tr class="border-b border-slate-50">
+                            <td class="py-4">XL</td>
+                            <td class="py-4">44</td>
+                            <td class="py-4">30</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4">XXL</td>
+                            <td class="py-4">46</td>
+                            <td class="py-4">31</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="toggleSizeChart()" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Close</button>
+        </div>
+    </div>
     <!-- Navbar -->
     <nav class="sticky top-0 z-40 glass border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -61,12 +113,13 @@
                     <!-- Stock status badge -->
                 </div>
 
-                <div id="size-section" class="pt-6 border-t border-slate-100 hidden">
-                    <div class="flex justify-between items-center mb-4">
+                <!-- Size Selection -->
+                <div id="size-selection" class="hidden pt-6 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Select Size</h3>
-                        <button id="size-chart-btn" onclick="openSizeChart()" class="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 hidden">Size Chart</button>
+                        <button onclick="toggleSizeChart()" class="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 underline">Size Chart</button>
                     </div>
-                    <div id="size-list" class="flex flex-wrap gap-3">
+                    <div id="size-options" class="flex flex-wrap gap-3">
                         <!-- Sizes will be injected -->
                     </div>
                 </div>
@@ -95,22 +148,6 @@
         </div>
     </div>
 
-    <!-- Size Chart Modal -->
-    <div id="size-chart-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSizeChart()"></div>
-        <div class="relative bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-            <div class="p-8 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">Size Chart</h3>
-                <button onclick="closeSizeChart()" class="text-slate-400 hover:text-slate-900">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="p-8 overflow-auto max-h-[70vh]">
-                <img id="size-chart-img" src="" class="w-full h-auto rounded-2xl">
-            </div>
-        </div>
-    </div>
-
     <!-- Sticky Add to Cart (Mobile) -->
     <div class="fixed bottom-6 left-4 right-4 z-50 lg:relative lg:bottom-0 lg:left-0 lg:right-0 lg:p-0">
         <div class="max-w-4xl mx-auto glass rounded-[2rem] p-3 border border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.2)] lg:shadow-none lg:bg-transparent lg:border-none">
@@ -129,6 +166,10 @@
         const productId = urlParams.get('id');
         let currentProduct = null;
         let selectedSize = null;
+
+        function toggleSizeChart() {
+            document.getElementById('size-chart-modal').classList.toggle('hidden');
+        }
 
         async function loadProduct() {
             if (!productId) {
@@ -150,30 +191,6 @@
                 const mainImg = document.getElementById('main-image');
                 mainImg.src = product.imageUrl || 'https://via.placeholder.com/600';
 
-                // Size Chart
-                if (product.sizeChartUrl) {
-                    document.getElementById('size-chart-btn').classList.remove('hidden');
-                    document.getElementById('size-chart-img').src = product.sizeChartUrl;
-                }
-
-                // Sizes
-                if (product.sizes && product.sizes.length > 0) {
-                    document.getElementById('size-section').classList.remove('hidden');
-                    const sizeList = document.getElementById('size-list');
-                    sizeList.innerHTML = '';
-                    product.sizes.forEach(size => {
-                        const btn = document.createElement('button');
-                        btn.className = 'w-14 h-14 rounded-2xl border-2 border-slate-100 font-black text-slate-900 transition-all hover:border-slate-900';
-                        btn.textContent = size;
-                        btn.onclick = () => {
-                            selectedSize = size;
-                            sizeList.querySelectorAll('button').forEach(b => b.classList.replace('border-slate-900', 'border-slate-100'));
-                            btn.classList.replace('border-slate-100', 'border-slate-900');
-                        };
-                        sizeList.appendChild(btn);
-                    });
-                }
-
                 // Compare Price
                 if (product.comparePrice && product.comparePrice > product.price) {
                     const compPrice = document.getElementById('compare-price');
@@ -193,9 +210,9 @@
                     status.innerHTML = `<span class="text-green-500">In Stock</span>`;
                 }
 
-                // Gallery
+                // Gallery (Limit to 4)
                 const thumbnails = document.getElementById('thumbnails');
-                const images = [product.imageUrl, ...(product.images || [])].filter(Boolean);
+                const images = [product.imageUrl, ...(product.images || [])].filter(Boolean).slice(0, 4);
                 images.forEach((img, i) => {
                     const thumb = document.createElement('img');
                     thumb.src = img;
@@ -208,6 +225,23 @@
                     thumbnails.appendChild(thumb);
                 });
 
+                // Sizes
+                if (product.sizes && product.sizes.length > 0) {
+                    document.getElementById('size-selection').classList.remove('hidden');
+                    const sizeContainer = document.getElementById('size-options');
+                    product.sizes.forEach(size => {
+                        const btn = document.createElement('button');
+                        btn.className = 'size-btn px-6 py-3 rounded-xl border-2 border-slate-100 font-black text-xs transition-all uppercase hover:border-slate-900';
+                        btn.textContent = size;
+                        btn.onclick = () => {
+                            selectedSize = size;
+                            sizeContainer.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                        };
+                        sizeContainer.appendChild(btn);
+                    });
+                }
+
                 loadRelated(product.category);
             } catch (err) {
                 console.error(err);
@@ -215,9 +249,6 @@
                 setTimeout(() => window.location.href = '/', 2000);
             }
         }
-
-        function openSizeChart() { document.getElementById('size-chart-modal').classList.remove('hidden'); }
-        function closeSizeChart() { document.getElementById('size-chart-modal').classList.add('hidden'); }
 
         async function loadRelated(category) {
             if (!category) return;
@@ -261,20 +292,20 @@
                 Adding...
             `;
             
-            await Cart.add(productId, qty, selectedSize);
+            await Cart.add(productId, qty, { size: selectedSize });
             
             btn.innerHTML = `
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 Added!
             `;
-            btn.classList.replace('bg-slate-900', 'bg-green-600');
+            btn.classList.replace('bg-indigo-600', 'bg-green-600');
             
             setTimeout(() => {
                 btn.innerHTML = `
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     Add to Cart
                 `;
-                btn.classList.replace('bg-green-600', 'bg-slate-900');
+                btn.classList.replace('bg-green-600', 'bg-indigo-600');
             }, 2000);
         }
 

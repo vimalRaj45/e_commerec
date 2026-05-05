@@ -98,29 +98,29 @@
             let subtotal = 0;
 
             items.forEach(item => {
-                const itemTotal = parseFloat(item.price) * item.quantity;
-                subtotal += itemTotal;
-
+                subtotal += parseFloat(item.price) * item.quantity;
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-[2rem] p-5 shadow-sm border border-slate-100 flex gap-6 items-center relative group';
+                card.className = 'relative bg-white rounded-[2.5rem] p-5 shadow-sm border border-slate-100 flex gap-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 duration-700';
                 card.innerHTML = `
-                    <div class="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
-                        <img src="${item.imageUrl}" class="w-full h-full object-cover">
+                    <div class="w-32 h-32 rounded-3xl overflow-hidden flex-shrink-0">
+                        <img src="${item.imageUrl || '/placeholder.png'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
                     </div>
                     <div class="flex-grow min-w-0">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-slate-900 truncate pr-8 text-lg tracking-tight">${item.name}</h3>
-                            <button onclick="removeFromCart('${item.productId}', '${item.size || ''}')" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center text-slate-300 hover:text-rose-500 transition-colors">
+                            <div>
+                                <h3 class="font-bold text-slate-900 truncate pr-8 text-lg tracking-tight">${item.name}</h3>
+                                ${item.metadata?.size ? `<span class="inline-block mt-1 px-3 py-1 bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-lg">Size: ${item.metadata.size}</span>` : ''}
+                            </div>
+                            <button onclick='removeFromCart("${item.productId}", ${JSON.stringify(item.metadata)})' class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center text-slate-300 hover:text-rose-500 transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
-                        ${item.size ? `<p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Size: ${item.size}</p>` : ''}
                         <div class="flex items-center justify-between mt-4">
                             <p class="text-indigo-600 font-black text-xl tracking-tighter">${utils.formatCurrency(item.price)}</p>
                             <div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
-                                <button onclick="updateCartQty('${item.productId}', ${item.quantity - 1}, '${item.size || ''}')" class="w-8 h-8 flex items-center justify-center font-black hover:bg-white rounded-lg transition-all">-</button>
+                                <button onclick='updateCartQty("${item.productId}", ${item.quantity - 1}, ${JSON.stringify(item.metadata)})' class="w-8 h-8 flex items-center justify-center font-black hover:bg-white rounded-lg transition-all">-</button>
                                 <span class="w-10 text-center text-sm font-black">${item.quantity}</span>
-                                <button onclick="updateCartQty('${item.productId}', ${item.quantity + 1}, '${item.size || ''}')" class="w-8 h-8 flex items-center justify-center font-black hover:bg-white rounded-lg transition-all">+</button>
+                                <button onclick='updateCartQty("${item.productId}", ${item.quantity + 1}, ${JSON.stringify(item.metadata)})' class="w-8 h-8 flex items-center justify-center font-black hover:bg-white rounded-lg transition-all">+</button>
                             </div>
                         </div>
                     </div>
@@ -136,17 +136,15 @@
             document.getElementById('total').textContent = utils.formatCurrency(total);
         }
 
-        async function updateCartQty(id, qty, size) {
+        async function updateCartQty(id, qty, metadata) {
             if (qty < 1) return;
             if (qty > 20) return;
-            await API.put('/cart/update', { productId: id, quantity: qty, size: size || null });
-            await Cart.fetch();
+            await Cart.update(id, qty, metadata);
             renderCart();
         }
 
-        async function removeFromCart(id, size) {
-            await API.delete(`/cart/remove/${id}${size ? `?size=${size}` : ''}`);
-            await Cart.fetch();
+        async function removeFromCart(id, metadata) {
+            await Cart.remove(id, metadata);
             renderCart();
         }
 
