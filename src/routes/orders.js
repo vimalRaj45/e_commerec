@@ -212,23 +212,6 @@ async function orderRoutes(fastify, opts) {
     }
   });
   
-  // Get My Orders (Authenticated Customer)
-  fastify.get('/my', { preHandler: [fastify.authenticate] }, async (request, reply) => {
-    const orders = await fastify.prisma.order.findMany({
-      where: { userId: request.user.id },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        invoiceNumber: true,
-        total: true,
-        status: true,
-        createdAt: true,
-        paymentStatus: true
-      }
-    });
-
-    return { success: true, data: orders };
-  });
 }
 
 module.exports = orderRoutes;
