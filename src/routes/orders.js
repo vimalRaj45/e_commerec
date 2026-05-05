@@ -161,7 +161,17 @@ async function orderRoutes(fastify, opts) {
     try {
       const order = await fastify.prisma.order.findUnique({
         where: { id },
-        select: { status: true, updatedAt: true, createdAt: true, invoiceNumber: true, total: true, subtotal: true, taxAmount: true, paymentMethod: true }
+        select: { 
+          status: true, 
+          updatedAt: true, 
+          createdAt: true, 
+          invoiceNumber: true, 
+          total: true, 
+          subtotal: true, 
+          taxAmount: true, 
+          paymentMethod: true,
+          items: true
+        }
       });
 
       if (!order) {
@@ -176,6 +186,7 @@ async function orderRoutes(fastify, opts) {
         subtotal: Number(order.subtotal),
         taxAmount: Number(order.taxAmount),
         paymentMethod: order.paymentMethod,
+        items: order.items,
         updatedAt: order.updatedAt,
         timeline: [
           { status: 'PLACED', time: order.createdAt },

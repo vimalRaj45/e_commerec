@@ -1,85 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - ShopOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4f46e5;
             --slate-900: #0f172a;
             --bg: #fdfdfd;
         }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #334155; }
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; color: #334155; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .step-active { color: var(--slate-900); }
-        .step-active .dot { background-color: var(--slate-900); box-shadow: 0 0 0 6px rgb(15 23 42 / 0.1); }
+        .step-active .dot { background-color: var(--slate-900); box-shadow: 0 0 0 8px rgb(15 23 42 / 0.1); }
+        .step-active .dot-inner { transform: scale(1); }
         .dot { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dot-inner { transform: scale(0); transition: all 0.4s ease; }
+        .progress-line { transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-32">
+    <!-- Navbar -->
     <nav class="sticky top-0 z-40 glass border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-900 hover:bg-slate-200 transition-all">
+            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-500">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
             </button>
-            <h1 class="text-sm font-black uppercase tracking-widest text-slate-900">Track Order</h1>
+            <h1 class="text-xs font-black uppercase tracking-widest text-slate-900">Track Order</h1>
             <div class="w-10"></div>
         </div>
     </nav>
 
-    <div class="max-w-xl mx-auto px-4 py-10">
-        <!-- Search -->
-        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-10">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Order Tracking ID</label>
-            <div class="flex gap-3">
-                <input type="text" id="track-id" placeholder="Paste your Order ID here..." class="flex-grow px-6 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 font-bold">
-                <button onclick="trackOrder()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-xl shadow-slate-900/10">Track</button>
-            </div>
+    <div class="max-w-2xl mx-auto px-6 py-12">
+        <!-- Hero Search -->
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black text-slate-900 tracking-tight mb-4">Where's my order?</h2>
+            <p class="text-slate-500 font-medium">Enter your tracking ID to follow your journey.</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] p-4 shadow-2xl shadow-slate-200/50 border border-slate-100 mb-12 flex flex-col md:flex-row gap-3">
+            <input type="text" id="track-id" placeholder="Paste your Order ID here..." class="flex-grow px-8 py-5 rounded-[1.8rem] bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 font-black tracking-tight text-lg">
+            <button onclick="trackOrder()" class="bg-slate-900 text-white px-12 py-5 rounded-[1.8rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-indigo-600 transition-all shadow-xl shadow-slate-900/20 active:scale-95">Track Now</button>
         </div>
 
         <!-- Tracking Results -->
-        <div id="tracking-content" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 mb-8">
-                <div class="flex justify-between items-center mb-12 pb-8 border-b border-slate-50">
+        <div id="tracking-content" class="hidden space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <!-- Summary Card -->
+            <div class="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 pb-10 border-b border-slate-100">
                     <div>
-                        <p id="track-invoice" class="text-xl font-black text-slate-900 tracking-tight">INV-0000</p>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Order ID</p>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Invoice Number</p>
+                        <p id="track-invoice" class="text-2xl font-black text-slate-900 tracking-tight">INV-0000</p>
                     </div>
-                    <div class="text-right">
-                        <p id="track-total" class="text-xl font-black text-slate-900 tracking-tight">₹0.00</p>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Order Total</p>
+                    <div class="md:text-right">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Order Status</p>
+                        <div id="status-badge" class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">Processing</div>
                     </div>
                 </div>
 
                 <!-- Vertical Stepper -->
-                <div class="relative space-y-12 pl-12">
-                    <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-100"></div>
+                <div class="relative space-y-16 pl-16">
+                    <!-- Progress Line -->
+                    <div class="absolute left-[23px] top-4 bottom-4 w-1 bg-slate-100 rounded-full">
+                        <div id="progress-bar" class="progress-line w-full bg-indigo-600 rounded-full h-0"></div>
+                    </div>
                     
-                    <div id="step-PLACED" class="relative text-slate-300">
-                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
-                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Order Placed</h4>
+                    <div id="step-PLACED" class="relative text-slate-300 transition-all duration-500">
+                        <div class="dot absolute -left-[54px] top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center z-10">
+                            <div class="dot-inner w-3 h-3 rounded-full bg-indigo-600"></div>
+                        </div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1 text-inherit">Order Placed</h4>
                         <p class="text-sm font-medium text-slate-400">Successfully received your order</p>
                     </div>
 
-                    <div id="step-ACCEPTED" class="relative text-slate-300">
-                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
-                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Processing</h4>
+                    <div id="step-ACCEPTED" class="relative text-slate-300 transition-all duration-500">
+                        <div class="dot absolute -left-[54px] top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center z-10">
+                            <div class="dot-inner w-3 h-3 rounded-full bg-indigo-600"></div>
+                        </div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1 text-inherit">Processing</h4>
                         <p class="text-sm font-medium text-slate-400">Your order is being prepared</p>
                     </div>
 
-                    <div id="step-READY" class="relative text-slate-300">
-                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
-                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Ready</h4>
-                        <p class="text-sm font-medium text-slate-400">Packed and waiting for dispatch</p>
+                    <div id="step-READY" class="relative text-slate-300 transition-all duration-500">
+                        <div class="dot absolute -left-[54px] top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center z-10">
+                            <div class="dot-inner w-3 h-3 rounded-full bg-indigo-600"></div>
+                        </div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1 text-inherit">Ready for Dispatch</h4>
+                        <p class="text-sm font-medium text-slate-400">Packed and waiting for delivery</p>
                     </div>
 
-                    <div id="step-DELIVERED" class="relative text-slate-300">
-                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
-                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Completed</h4>
-                        <p class="text-sm font-medium text-slate-400">Delivered to your doorstep</p>
+                    <div id="step-DELIVERED" class="relative text-slate-300 transition-all duration-500">
+                        <div class="dot absolute -left-[54px] top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center z-10">
+                            <div class="dot-inner w-3 h-3 rounded-full bg-indigo-600"></div>
+                        </div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1 text-inherit">Delivered</h4>
+                        <p class="text-sm font-medium text-slate-400">Successfully handed over to you</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Cancelled State -->
-            <div id="cancelled-alert" class="hidden bg-rose-50 text-rose-600 p-6 rounded-[2rem] font-black text-center border border-rose-100 uppercase tracking-widest text-xs">
+            <!-- Items Card -->
+            <div class="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100">
+                <h3 class="text-xs font-black uppercase tracking-widest text-slate-900 mb-8 flex items-center gap-3">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    Order Summary
+                </h3>
+                <div id="order-items-list" class="space-y-6">
+                    <!-- Items will be injected -->
+                </div>
+                <div class="mt-10 pt-10 border-t border-slate-100 space-y-4">
+                    <div class="flex justify-between text-sm font-bold text-slate-400">
+                        <span>Subtotal</span>
+                        <span id="track-subtotal">₹0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm font-bold text-slate-400">
+                        <span>Tax & Fees</span>
+                        <span id="track-tax">₹0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xl font-black text-slate-900 pt-4">
+                        <span class="uppercase tracking-widest text-xs mt-2">Total Paid</span>
+                        <span id="track-total">₹0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancelled Alert -->
+            <div id="cancelled-alert" class="hidden bg-rose-50 text-rose-600 p-8 rounded-[2.5rem] font-black text-center border border-rose-100 uppercase tracking-widest text-xs flex items-center justify-center gap-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 This order has been cancelled.
             </div>
+        </div>
+
+        <!-- Not Found State -->
+        <div id="not-found-content" class="hidden text-center py-20 animate-in fade-in zoom-in duration-700">
+            <div class="w-24 h-24 bg-slate-100 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
+                <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-2">Order Not Found</h3>
+            <p class="text-slate-500 font-medium">We couldn't find an order with that ID.<br>Please double check and try again.</p>
         </div>
     </div>
 
@@ -97,6 +158,10 @@
             const id = document.getElementById('track-id').value.trim();
             if (!id) return;
 
+            // Reset states
+            document.getElementById('tracking-content').classList.add('hidden');
+            document.getElementById('not-found-content').classList.add('hidden');
+
             try {
                 const res = await API.get(`/orders/track/${id}`);
                 const data = res.data;
@@ -104,12 +169,32 @@
                 document.getElementById('tracking-content').classList.remove('hidden');
                 document.getElementById('track-invoice').textContent = data.invoiceNumber;
                 document.getElementById('track-total').textContent = utils.formatCurrency(data.total);
+                document.getElementById('track-subtotal').textContent = utils.formatCurrency(data.subtotal);
+                document.getElementById('track-tax').textContent = utils.formatCurrency(data.taxAmount);
+                document.getElementById('status-badge').textContent = data.status;
+
+                // Render Items
+                const list = document.getElementById('order-items-list');
+                list.innerHTML = '';
+                data.items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center bg-slate-50 p-4 rounded-2xl';
+                    div.innerHTML = `
+                        <div>
+                            <p class="font-black text-slate-900 text-sm tracking-tight">${item.name}</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">Qty: ${item.quantity} ${item.size ? `· Size: ${item.size}` : ''}</p>
+                        </div>
+                        <p class="font-black text-slate-900">${utils.formatCurrency(item.price * item.quantity)}</p>
+                    `;
+                    list.appendChild(div);
+                });
                 
                 const statusOrder = ['PLACED', 'ACCEPTED', 'READY', 'DELIVERED'];
                 const currentStatus = data.status;
 
                 if (currentStatus === 'CANCELLED') {
                     document.getElementById('cancelled-alert').classList.remove('hidden');
+                    document.getElementById('progress-bar').style.height = '0%';
                     statusOrder.forEach(s => {
                         const el = document.getElementById(`step-${s}`);
                         el.classList.add('opacity-30');
@@ -119,6 +204,10 @@
                     document.getElementById('cancelled-alert').classList.add('hidden');
                     const currentIndex = statusOrder.indexOf(currentStatus);
                     
+                    // Update progress bar
+                    const progressHeights = ['0%', '33%', '66%', '100%'];
+                    document.getElementById('progress-bar').style.height = progressHeights[currentIndex];
+
                     statusOrder.forEach((s, i) => {
                         const el = document.getElementById(`step-${s}`);
                         el.classList.remove('opacity-30');
@@ -132,7 +221,7 @@
                     });
                 }
             } catch (err) {
-                utils.showToast('Order not found', 'error');
+                document.getElementById('not-found-content').classList.remove('hidden');
             }
         }
     </script>
