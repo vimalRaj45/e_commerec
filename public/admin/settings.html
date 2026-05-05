@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Settings - ShopOS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; }
+        .main-content { margin-left: 260px; min-height: 100vh; }
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar bg-white border-r border-slate-100 p-6 z-50">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+            <h1 class="text-xl font-bold">ShopOS Admin</h1>
+        </div>
+        <nav class="space-y-2">
+            <a href="/admin/dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="/admin/orders.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                Orders
+            </a>
+            <a href="/admin/products.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                Products
+            </a>
+            <a href="/admin/settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </a>
+            <div class="pt-10">
+                <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all w-full">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content p-6 lg:p-10">
+        <header class="mb-10">
+            <h2 class="text-2xl font-bold text-slate-800">Settings</h2>
+            <p class="text-slate-500">Manage your shop profile and configuration</p>
+        </header>
+
+        <form id="settings-form" class="max-w-2xl space-y-8">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
+                <h3 class="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4">Shop Information</h3>
+                
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Shop Name</label>
+                    <input type="text" name="name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                    <textarea name="description" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Phone</label>
+                        <input type="tel" name="phone" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">GSTIN</label>
+                        <input type="text" name="gstin" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Store Address</label>
+                    <textarea name="address" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
+                <h3 class="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4">Preferences</h3>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-slate-700">Cash on Delivery (COD)</p>
+                        <p class="text-xs text-slate-400">Enable or disable COD payment method</p>
+                    </div>
+                    <button type="button" id="cod-toggle" class="w-12 h-6 rounded-full relative transition-all bg-slate-200">
+                        <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all"></div>
+                    </button>
+                    <input type="hidden" name="codEnabled" value="true">
+                </div>
+            </div>
+
+            <button type="submit" class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:bg-indigo-700 transition-all">
+                Save Changes
+            </button>
+        </form>
+    </main>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/admin/js/auth-guard.js"></script>
+    <script>
+        const form = document.getElementById('settings-form');
+        const codBtn = document.getElementById('cod-toggle');
+        const codInput = form.elements['codEnabled'];
+
+        async function loadSettings() {
+            try {
+                const res = await API.get('/shop');
+                const shop = res.data;
+                Object.keys(shop).forEach(key => {
+                    if (form.elements[key]) {
+                        form.elements[key].value = shop[key];
+                    }
+                });
+                updateCODToggle(shop.codEnabled);
+            } catch (err) {}
+        }
+
+        codBtn.onclick = () => {
+            const current = codInput.value === 'true';
+            updateCODToggle(!current);
+        };
+
+        function updateCODToggle(enabled) {
+            codInput.value = enabled ? 'true' : 'false';
+            if (enabled) {
+                codBtn.classList.replace('bg-slate-200', 'bg-indigo-600');
+                codBtn.querySelector('div').classList.add('translate-x-6');
+            } else {
+                codBtn.classList.replace('bg-indigo-600', 'bg-slate-200');
+                codBtn.querySelector('div').classList.remove('translate-x-6');
+            }
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.codEnabled = data.codEnabled === 'true';
+
+            try {
+                await API.put('/shop', data);
+                utils.showToast('Settings saved', 'success');
+            } catch (err) {
+                utils.showToast(err.message, 'error');
+            }
+        };
+
+        loadSettings();
+    </script>
+</body>
+</html>

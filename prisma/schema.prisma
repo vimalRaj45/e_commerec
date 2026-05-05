@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  logoUrl     String?
+  phone       String?
+  address     String?
+  description String?
+  gstin       String?
+  codEnabled  Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+  orders      Order[]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String?
+  name         String?
+  phone        String?
+  googleId     String?  @unique
+  role         Role     @default(OWNER)
+  createdAt    DateTime @default(now())
+  orders       Order[]
+}
+
+enum Role {
+  OWNER
+  CUSTOMER
+}
+
+model Product {
+  id           String      @id @default(uuid())
+  shopId       String
+  shop         Shop        @relation(fields: [shopId], references: [id])
+  name         String
+  description  String?
+  price        Decimal
+  comparePrice Decimal?
+  stock        Int         @default(0)
+  category     String?
+  imageUrl     String?
+  images       String[]    @default([])
+  hsnCode      String?
+  isActive     Boolean     @default(true)
+  isDeleted    Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orderItems   OrderItem[]
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  invoiceNumber     String        @unique
+  shopId            String
+  shop              Shop          @relation(fields: [shopId], references: [id])
+  userId            String?
+  user              User?         @relation(fields: [userId], references: [id])
+  customerName      String
+  customerPhone     String
+  customerEmail     String?
+  customerAddress   String?
+  deliveryType      DeliveryType  @default(DELIVERY)
+  items             OrderItem[]
+  subtotal          Decimal
+  cgst              Decimal       @default(0)
+  sgst              Decimal       @default(0)
+  taxAmount         Decimal       @default(0)
+  total             Decimal
+  status            OrderStatus   @default(PLACED)
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentMethod     PaymentMethod @default(ONLINE)
+  razorpayOrderId   String?       @unique
+  razorpayPaymentId String?
+  notes             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal
+  name      String
+  hsnCode   String?
+}
+
+model NotificationLog {
+  id      String             @id @default(uuid())
+  orderId String?
+  type    NotificationType
+  status  NotificationStatus
+  sentAt  DateTime           @default(now())
+  error   String?
+}
+
+enum DeliveryType {
+  DELIVERY
+  PICKUP
+}
+
+enum OrderStatus {
+  PLACED
+  ACCEPTED
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  COD
+  FAILED
+}
+
+enum PaymentMethod {
+  ONLINE
+  COD
+}
+
+enum NotificationType {
+  EMAIL
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+}

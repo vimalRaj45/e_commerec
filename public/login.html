@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShopOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">Welcome Back</h1>
+            <p class="text-slate-500">Login to track your orders and more</p>
+        </div>
+
+        <form id="auth-form" class="space-y-4">
+            <div id="name-field" class="hidden">
+                <label class="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
+                <input type="text" name="name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                <input type="email" name="email" required placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Password</label>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all">
+                Login
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p id="toggle-text" class="text-slate-500">
+                Don't have an account? 
+                <button onclick="toggleMode()" class="text-indigo-600 font-bold hover:underline">Register</button>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script>
+        let isLogin = true;
+        const form = document.getElementById('auth-form');
+        const nameField = document.getElementById('name-field');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleText = document.getElementById('toggle-text');
+
+        function toggleMode() {
+            isLogin = !isLogin;
+            nameField.classList.toggle('hidden');
+            submitBtn.textContent = isLogin ? 'Login' : 'Register';
+            toggleText.innerHTML = isLogin 
+                ? `Don't have an account? <button onclick="toggleMode()" class="text-indigo-600 font-bold hover:underline">Register</button>`
+                : `Already have an account? <button onclick="toggleMode()" class="text-indigo-600 font-bold hover:underline">Login</button>`;
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const endpoint = isLogin ? '/auth/login' : '/auth/customer/register';
+                const res = await API.post(endpoint, data);
+                
+                if (isLogin) {
+                    localStorage.setItem('customer_token', res.data.token);
+                    localStorage.setItem('customer_user', JSON.stringify(res.data.user));
+                    utils.showToast('Login successful', 'success');
+                    setTimeout(() => window.location.href = '/', 1000);
+                } else {
+                    utils.showToast('Registration successful! Please login.', 'success');
+                    toggleMode();
+                }
+            } catch (err) {
+                utils.showToast(err.message, 'error');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ShopOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; }
+        .main-content { margin-left: 260px; min-height: 100vh; }
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar bg-white border-r border-slate-100 p-6 z-50">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+            <h1 class="text-xl font-bold">ShopOS Admin</h1>
+        </div>
+
+        <nav class="space-y-2">
+            <a href="/admin/dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="/admin/orders.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                Orders
+            </a>
+            <a href="/admin/products.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                Products
+            </a>
+            <a href="/admin/settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </a>
+            <div class="pt-10">
+                <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all w-full">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content p-6 lg:p-10">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Dashboard Overview</h2>
+                <p class="text-slate-500">Welcome back, Shop Owner</p>
+            </div>
+            <button class="lg:hidden p-2 bg-white rounded-lg border border-slate-100" onclick="document.querySelector('.sidebar').classList.toggle('active')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                </div>
+                <p class="text-slate-500 text-sm font-medium">Orders Today</p>
+                <h3 id="stat-orders" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <p class="text-slate-500 text-sm font-medium">Revenue Today</p>
+                <h3 id="stat-revenue" class="text-2xl font-bold text-slate-800 mt-1">₹0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <p class="text-slate-500 text-sm font-medium">Total Products</p>
+                <h3 id="stat-products" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <p class="text-slate-500 text-sm font-medium">Low Stock Items</p>
+                <h3 id="stat-low-stock" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold mb-6">Revenue (Last 7 Days)</h3>
+                <canvas id="revenueChart" height="200"></canvas>
+            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold mb-6">Recent Orders</h3>
+                <div id="recent-orders" class="space-y-4">
+                    <!-- Orders will be injected -->
+                </div>
+                <a href="/admin/orders.html" class="block text-center text-indigo-600 font-bold mt-6 hover:underline text-sm">View All Orders</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/admin/js/auth-guard.js"></script>
+    <script>
+        async function loadDashboard() {
+            try {
+                // Load Stats
+                const statsRes = await API.get('/admin/dashboard/stats');
+                const stats = statsRes.data;
+                document.getElementById('stat-orders').textContent = stats.ordersToday;
+                document.getElementById('stat-revenue').textContent = utils.formatCurrency(stats.revenueToday);
+                document.getElementById('stat-products').textContent = stats.totalProducts;
+                document.getElementById('stat-low-stock').textContent = stats.lowStockItems;
+
+                // Load Recent Orders
+                const ordersRes = await API.get('/admin/orders?limit=5');
+                const ordersGrid = document.getElementById('recent-orders');
+                ordersGrid.innerHTML = '';
+                ordersRes.data.orders.forEach(order => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-4 bg-slate-50 rounded-2xl';
+                    div.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-slate-800">${order.invoiceNumber}</p>
+                                <p class="text-xs text-slate-400">${order.customerName}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-sm text-slate-800">${utils.formatCurrency(order.total)}</p>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${getStatusColor(order.status)}">${order.status}</span>
+                        </div>
+                    `;
+                    ordersGrid.appendChild(div);
+                });
+
+                // Load Chart
+                const chartRes = await API.get('/admin/dashboard/charts?range=7');
+                const chartData = chartRes.data;
+                renderChart(chartData);
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'PLACED': return 'bg-blue-100 text-blue-600';
+                case 'ACCEPTED': return 'bg-indigo-100 text-indigo-600';
+                case 'READY': return 'bg-orange-100 text-orange-600';
+                case 'DELIVERED': return 'bg-green-100 text-green-600';
+                case 'CANCELLED': return 'bg-red-100 text-red-600';
+                default: return 'bg-slate-100 text-slate-600';
+            }
+        }
+
+        function renderChart(data) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.date.split('-').slice(1).join('/')),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: data.map(d => d.revenue),
+                        backgroundColor: '#4f46e5',
+                        borderRadius: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        loadDashboard();
+        setInterval(loadDashboard, 60000); // Refresh every minute
+    </script>
+</body>
+</html>
