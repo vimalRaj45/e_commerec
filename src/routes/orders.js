@@ -129,6 +129,16 @@ async function orderRoutes(fastify, opts) {
     return { success: true, data: order };
   });
 
+  // Get My Orders (Logged in customer)
+  fastify.get('/my', { preValidation: [fastify.authenticate] }, async (request, reply) => {
+    const orders = await fastify.prisma.order.findMany({
+      where: { userId: request.user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { items: true }
+    });
+    return { success: true, data: orders };
+  });
+
   // Get Order (Public - requires phone verification)
   fastify.get('/:id', async (request, reply) => {
     const { id } = request.params;

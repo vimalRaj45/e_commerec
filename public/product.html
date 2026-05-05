@@ -76,11 +76,14 @@
             <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-900 hover:bg-slate-200 transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
             </button>
-            <h1 class="text-sm font-black uppercase tracking-widest text-slate-900">Product Details</h1>
-            <a href="/cart.html" class="relative w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-900">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span class="cart-badge absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
-            </a>
+            <h1 class="text-xs font-black uppercase tracking-widest text-slate-900">Product Details</h1>
+            <div class="flex items-center gap-4">
+                <div id="auth-nav" class="flex items-center gap-4"></div>
+                <a href="/cart.html" class="relative w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span class="cart-badge absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -309,7 +312,35 @@
             }, 2000);
         }
 
-        loadProduct();
+        // Auth Navigation
+        function updateAuthNav() {
+            const authNav = document.getElementById('auth-nav');
+            const token = localStorage.getItem('customer_token');
+
+            if (token) {
+                authNav.innerHTML = `
+                    <a href="/my-orders.html" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors">My Orders</a>
+                    <button onclick="logout()" class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-900 hover:bg-rose-50 hover:text-rose-600 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                `;
+            } else {
+                authNav.innerHTML = `
+                    <a href="/login.html" class="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">Login</a>
+                `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('customer_token');
+            localStorage.removeItem('customer_user');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProduct();
+            updateAuthNav();
+        });
     </script>
 </body>
 </html>
