@@ -1,86 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Order - ShopOS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .step-active { color: #4f46e5; }
-        .step-active .dot { background-color: #4f46e5; ring-color: #e0e7ff; }
-        .dot { transition: all 0.5s ease; }
+        :root {
+            --primary: #4f46e5;
+            --slate-900: #0f172a;
+            --bg: #fdfdfd;
+        }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #334155; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .step-active { color: var(--slate-900); }
+        .step-active .dot { background-color: var(--slate-900); box-shadow: 0 0 0 6px rgb(15 23 42 / 0.1); }
+        .dot { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="pb-20">
     <nav class="sticky top-0 z-40 glass border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <button onclick="history.back()" class="p-2 -ml-2 text-slate-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl text-slate-900 hover:bg-slate-200 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
             </button>
-            <h1 class="text-lg font-bold">Track Order</h1>
+            <h1 class="text-sm font-black uppercase tracking-widest text-slate-900">Track Order</h1>
             <div class="w-10"></div>
         </div>
     </nav>
 
-    <div class="max-w-xl mx-auto px-4 py-8">
+    <div class="max-w-xl mx-auto px-4 py-10">
         <!-- Search -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8">
-            <label class="block text-sm font-medium text-slate-600 mb-2">Enter Order ID</label>
-            <div class="flex gap-2">
-                <input type="text" id="track-id" placeholder="Order ID..." class="flex-grow px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                <button onclick="trackOrder()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all">Track</button>
+        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mb-10">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Order Tracking ID</label>
+            <div class="flex gap-3">
+                <input type="text" id="track-id" placeholder="Paste your Order ID here..." class="flex-grow px-6 py-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 font-bold">
+                <button onclick="trackOrder()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-xl shadow-slate-900/10">Track</button>
             </div>
         </div>
 
         <!-- Tracking Results -->
-        <div id="tracking-content" class="hidden">
-            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-6">
-                <div class="flex justify-between items-start mb-10">
+        <div id="tracking-content" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 mb-8">
+                <div class="flex justify-between items-center mb-12 pb-8 border-b border-slate-50">
                     <div>
-                        <p id="track-invoice" class="text-lg font-bold text-slate-800">INV-0000</p>
-                        <p class="text-sm text-slate-400">Invoice Number</p>
+                        <p id="track-invoice" class="text-xl font-black text-slate-900 tracking-tight">INV-0000</p>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Order ID</p>
                     </div>
                     <div class="text-right">
-                        <p id="track-total" class="text-lg font-bold text-indigo-600">₹0.00</p>
-                        <p class="text-sm text-slate-400">Total Amount</p>
+                        <p id="track-total" class="text-xl font-black text-slate-900 tracking-tight">₹0.00</p>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Order Total</p>
                     </div>
                 </div>
 
                 <!-- Vertical Stepper -->
-                <div class="relative space-y-12 pl-10">
+                <div class="relative space-y-12 pl-12">
                     <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-100"></div>
                     
-                    <div id="step-PLACED" class="relative text-slate-400">
-                        <div class="dot absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-slate-200 ring-4 ring-white"></div>
-                        <h4 class="font-bold">Order Placed</h4>
-                        <p class="text-xs">We have received your order</p>
+                    <div id="step-PLACED" class="relative text-slate-300">
+                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Order Placed</h4>
+                        <p class="text-sm font-medium text-slate-400">Successfully received your order</p>
                     </div>
 
-                    <div id="step-ACCEPTED" class="relative text-slate-400">
-                        <div class="dot absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-slate-200 ring-4 ring-white"></div>
-                        <h4 class="font-bold">Order Accepted</h4>
-                        <p class="text-xs">The shop has accepted your order</p>
+                    <div id="step-ACCEPTED" class="relative text-slate-300">
+                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Processing</h4>
+                        <p class="text-sm font-medium text-slate-400">Your order is being prepared</p>
                     </div>
 
-                    <div id="step-READY" class="relative text-slate-400">
-                        <div class="dot absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-slate-200 ring-4 ring-white"></div>
-                        <h4 class="font-bold">Ready for Delivery/Pickup</h4>
-                        <p class="text-xs">Your items are packed and ready</p>
+                    <div id="step-READY" class="relative text-slate-300">
+                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Ready</h4>
+                        <p class="text-sm font-medium text-slate-400">Packed and waiting for dispatch</p>
                     </div>
 
-                    <div id="step-DELIVERED" class="relative text-slate-400">
-                        <div class="dot absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-slate-200 ring-4 ring-white"></div>
-                        <h4 class="font-bold">Delivered</h4>
-                        <p class="text-xs">Order has been successfully delivered</p>
+                    <div id="step-DELIVERED" class="relative text-slate-300">
+                        <div class="dot absolute -left-[36px] top-1 w-3 h-3 rounded-full bg-slate-200 ring-8 ring-white z-10"></div>
+                        <h4 class="font-black uppercase text-xs tracking-widest mb-1">Completed</h4>
+                        <p class="text-sm font-medium text-slate-400">Delivered to your doorstep</p>
                     </div>
                 </div>
             </div>
 
             <!-- Cancelled State -->
-            <div id="cancelled-alert" class="hidden bg-red-50 text-red-600 p-4 rounded-2xl font-bold text-center border border-red-100">
+            <div id="cancelled-alert" class="hidden bg-rose-50 text-rose-600 p-6 rounded-[2rem] font-black text-center border border-rose-100 uppercase tracking-widest text-xs">
                 This order has been cancelled.
             </div>
         </div>
@@ -113,7 +110,11 @@
 
                 if (currentStatus === 'CANCELLED') {
                     document.getElementById('cancelled-alert').classList.remove('hidden');
-                    statusOrder.forEach(s => document.getElementById(`step-${s}`).classList.add('opacity-30'));
+                    statusOrder.forEach(s => {
+                        const el = document.getElementById(`step-${s}`);
+                        el.classList.add('opacity-30');
+                        el.classList.remove('step-active');
+                    });
                 } else {
                     document.getElementById('cancelled-alert').classList.add('hidden');
                     const currentIndex = statusOrder.indexOf(currentStatus);
@@ -123,8 +124,10 @@
                         el.classList.remove('opacity-30');
                         if (i <= currentIndex) {
                             el.classList.add('step-active');
+                            el.querySelector('p').classList.replace('text-slate-400', 'text-slate-600');
                         } else {
                             el.classList.remove('step-active');
+                            el.querySelector('p').classList.replace('text-slate-600', 'text-slate-400');
                         }
                     });
                 }

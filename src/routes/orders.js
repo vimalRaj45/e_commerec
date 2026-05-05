@@ -4,19 +4,12 @@ const { sendEmailAsync } = require('../services/email');
 const config = require('../config');
 
 async function orderRoutes(fastify, opts) {
-  // Place Order (Public)
+  // Place Order (Authenticated Customer)
   fastify.post('/', {
+    preHandler: [fastify.authenticate],
     config: { rateLimit: { max: 10, timeWindow: '1 minute' } }
   }, async (request, reply) => {
-    // Optional auth for customers
-    let userId = null;
-    try {
-      const authHeader = request.headers.authorization;
-      if (authHeader) {
-        const decoded = await request.jwtVerify();
-        userId = decoded.id;
-      }
-    } catch (err) {}
+    const userId = request.user.id;
 
     const body = orderSchema.parse(request.body);
     const sessionId = request.cookies.cart_session;
@@ -65,6 +58,7 @@ async function orderRoutes(fastify, opts) {
           name: product.name,
           price: product.price,
           quantity: item.quantity,
+          size: item.size,
           hsnCode: product.hsnCode,
         });
       }

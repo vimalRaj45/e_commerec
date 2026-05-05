@@ -21,6 +21,8 @@ const productSchema = z.object({
   hsnCode: z.string().optional(),
   imageUrl: z.string().optional().or(z.literal('')),
   images: z.array(z.string()).optional(),
+  sizes: z.array(z.string()).optional(),
+  sizeChartUrl: z.string().optional().or(z.literal('')),
 }).refine(data => {
   if (data.comparePrice && data.comparePrice <= data.price) {
     return false;
@@ -41,12 +43,14 @@ const orderSchema = z.object({
   items: z.array(z.object({
     productId: z.string().uuid(),
     quantity: z.number().int().positive().max(20),
+    size: z.string().optional(),
   })).min(1),
 });
 
 const cartItemSchema = z.object({
   productId: z.string().uuid(),
   quantity: z.number().int().positive().max(20),
+  size: z.string().optional().or(z.literal('')),
 });
 
 const statusUpdateSchema = z.object({

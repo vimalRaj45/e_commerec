@@ -49,7 +49,7 @@ async function cartRoutes(fastify, opts) {
 
   // Add to Cart
   fastify.post('/add', async (request, reply) => {
-    const { productId, quantity } = cartItemSchema.parse(request.body);
+    const { productId, quantity, size } = cartItemSchema.parse(request.body);
     const sessionId = getSessionId(request, reply);
 
     const product = await fastify.prisma.product.findFirst({
@@ -65,13 +65,13 @@ async function cartRoutes(fastify, opts) {
     }
 
     let cart = await fastify.redis.get(`cart:${sessionId}`) || [];
-    const existingIndex = cart.findIndex(item => item.productId === productId);
+    const existingIndex = cart.findIndex(item => item.productId === productId && item.size === size);
 
     if (existingIndex > -1) {
       cart[existingIndex].quantity += quantity;
       if (cart[existingIndex].quantity > 20) cart[existingIndex].quantity = 20;
     } else {
-      cart.push({ productId, quantity });
+      cart.push({ productId, quantity, size });
     }
 
     await fastify.redis.set(`cart:${sessionId}`, JSON.stringify(cart), { ex: 86400 });
@@ -80,11 +80,11 @@ async function cartRoutes(fastify, opts) {
 
   // Update Cart Item
   fastify.put('/update', async (request, reply) => {
-    const { productId, quantity } = cartItemSchema.parse(request.body);
+    const { productId, quantity, size } = cartItemSchema.parse(request.body);
     const sessionId = getSessionId(request, reply);
 
     let cart = await fastify.redis.get(`cart:${sessionId}`) || [];
-    const existingIndex = cart.findIndex(item => item.productId === productId);
+    const existingIndex = cart.findIndex(item => item.productId === productId && item.size === size);
 
     if (existingIndex > -1) {
       cart[existingIndex].quantity = quantity;
@@ -97,10 +97,11 @@ async function cartRoutes(fastify, opts) {
   // Remove from Cart
   fastify.delete('/remove/:productId', async (request, reply) => {
     const { productId } = request.params;
+    const { size } = request.query;
     const sessionId = getSessionId(request, reply);
 
     let cart = await fastify.redis.get(`cart:${sessionId}`) || [];
-    cart = cart.filter(item => item.productId !== productId);
+    cart = cart.filter(item => !(item.productId === productId && item.size === size));
 
     await fastify.redis.set(`cart:${sessionId}`, JSON.stringify(cart), { ex: 86400 });
     return { success: true, data: cart };

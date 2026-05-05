@@ -13,9 +13,9 @@ const Cart = {
     }
   },
 
-  async add(productId, quantity = 1) {
+  async add(productId, quantity = 1, size = null) {
     try {
-      await API.post('/cart/add', { productId, quantity });
+      await API.post('/cart/add', { productId, quantity, size });
       await this.fetch();
       utils.showToast('Added to cart', 'success');
     } catch (err) {

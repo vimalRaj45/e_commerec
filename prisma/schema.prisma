@@ -52,6 +52,8 @@ model Product {
   category     String?
   imageUrl     String?
   images       String[]    @default([])
+  sizes        String[]    @default([])
+  sizeChartUrl String?
   hsnCode      String?
   isActive     Boolean     @default(true)
   isDeleted    Boolean     @default(false)
@@ -97,6 +99,7 @@ model OrderItem {
   quantity  Int
   price     Decimal
   name      String
+  size      String?
   hsnCode   String?
 }
 
