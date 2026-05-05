@@ -43,14 +43,14 @@ const orderSchema = z.object({
   items: z.array(z.object({
     productId: z.string().uuid(),
     quantity: z.number().int().positive().max(20),
-    size: z.string().optional(),
+    size: z.string().nullable().optional(),
   })).min(1),
 });
 
 const cartItemSchema = z.object({
   productId: z.string().uuid(),
   quantity: z.number().int().positive().max(20),
-  size: z.string().optional().or(z.literal('')),
+  size: z.string().nullable().optional(),
 });
 
 const statusUpdateSchema = z.object({
