@@ -14,8 +14,8 @@
         }
         body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; color: #334155; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        .step-active { color: var(--slate-900); }
-        .step-active .dot { background-color: var(--slate-900); box-shadow: 0 0 0 8px rgb(15 23 42 / 0.1); }
+        .step-active { color: var(--slate-900) !important; }
+        .step-active .dot { background-color: var(--slate-900) !important; box-shadow: 0 0 0 8px rgb(15 23 42 / 0.1); border-color: var(--slate-900) !important; }
         .step-active .dot-inner { transform: scale(1); }
         .dot { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .dot-inner { transform: scale(0); transition: all 0.4s ease; }
@@ -210,13 +210,19 @@
 
                     statusOrder.forEach((s, i) => {
                         const el = document.getElementById(`step-${s}`);
+                        const p = el.querySelector('p');
+                        
                         el.classList.remove('opacity-30');
                         if (i <= currentIndex) {
                             el.classList.add('step-active');
-                            el.querySelector('p').classList.replace('text-slate-400', 'text-slate-600');
+                            el.classList.remove('text-slate-300');
+                            p.classList.remove('text-slate-400');
+                            p.classList.add('text-slate-600');
                         } else {
                             el.classList.remove('step-active');
-                            el.querySelector('p').classList.replace('text-slate-600', 'text-slate-400');
+                            el.classList.add('text-slate-300');
+                            p.classList.remove('text-slate-600');
+                            p.classList.add('text-slate-400');
                         }
                     });
                 }
